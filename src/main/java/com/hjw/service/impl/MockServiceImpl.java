@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.hjw.core.model.MockDto;
 import com.hjw.service.MockService;
 import org.apache.logging.log4j.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class MockServiceImpl implements MockService{
+
+    private static Logger logger = LoggerFactory.getLogger(MockServiceImpl.class);
 
     private int EXPIRE_DAY_MIN = 1;   //最短有效时间
     private int EXPIRE_DAY_MAX = 5;   //最长有效时间
@@ -39,6 +43,8 @@ public class MockServiceImpl implements MockService{
     public MockDto getByUuId(String uuid) {
 
         String jsonStr = redisTemplate.opsForValue().get(uuid);
+
+        logger.info("jsonStr:"+jsonStr);
 
         if(Strings.isBlank(jsonStr)){
             throw new RuntimeException("Mock数据ID非法");

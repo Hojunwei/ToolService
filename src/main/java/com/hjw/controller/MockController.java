@@ -1,5 +1,6 @@
 package com.hjw.controller;
 
+import com.hjw.core.consistant.ResponseContentType;
 import com.hjw.core.model.MockDto;
 import com.hjw.core.model.ReturnT;
 import com.hjw.service.MockService;
@@ -52,7 +53,7 @@ public class MockController {
 
         MockDto mockDto = mockService.getByUuId(uuid);
         if(mockDto == null){
-            throw new RuntimeException("Mock数据ID非法");
+            throw new RuntimeException("Mock数据ID非法或接口时效已过期");
         }
 
         if(mockDto.getRespType() == null){
@@ -62,7 +63,8 @@ public class MockController {
         // write response
         try {
             response.setCharacterEncoding("UTF-8");
-            response.setContentType(mockDto.getRespType());
+            ResponseContentType responseContentType = ResponseContentType.match(mockDto.getRespType());
+            response.setContentType(responseContentType != null ? responseContentType.type:"");
 
             PrintWriter writer = response.getWriter();
             writer.write(mockDto.getRespExample());
